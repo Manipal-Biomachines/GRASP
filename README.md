@@ -106,6 +106,24 @@ l=l
 
 **Output** Text file containing all the possible sequences of mutations. Additionally a text file of randomly sampled mutations is also created.
 
+## Flags
+
+-g
+
+-a
+
+-o
+
+-d
+
+-g
+
+-a
+
+-l
+
+-c
+
 # Contribution
 
 l=l [Guildlines and future scope of the project]
@@ -116,4 +134,5 @@ iGEM MIT_MAHE 2022
 
 ## License
 
-This project falls under the MIT license.
+This project is licensed under the Creative Commons Attribution 4.0 International.
+[Learn more](http://choosealicense.com/licenses/cc-by-4.0/)
