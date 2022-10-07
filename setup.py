@@ -16,6 +16,7 @@ setup(
     ],
     setup_requires=['pytest-runner', 'flake8'],
     tests_require=['pytest'],
+    where='src',
     entry_points={
         'console_scripts': ['pep_mod=pep_mod.pep_mod:main']
     }
