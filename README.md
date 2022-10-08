@@ -146,21 +146,25 @@ We first create a Mutater object, which support the following three formats:
 2. Just the Wild type amino acid and its position, without the Mutant type. This can act as the template to create new Mutater objects.
 3. Just the position in the sequence.
 
----
+### Alanine scanning
+
+The Alanine scanning results from BUDE Alanine scan are parsed through which results in a position array over which mutations are possibly required.
 
 ### Group mutations
 
 The sequence is taken as a template over which a special array is constructed, with the following steps:
 
 1. Iterate over the sequence and get the wild type amino acid at each stage.
-2. Retain the wild type if mutation isn't required at this position.
+2. Retain the wild type if mutation isn't required at this position. This could result when the position doesn't want to be mutated, or when the position is present in the *mutation lock array*.
 3. If a mutation is required in the current position, replace the position with an array of all the possible amino acids within the same group. This step is important to achieve *Conserved mutations.*
-
----
 
 ### Cartesian product
 
-The special array is then passed to the `itertools.product` function, which evaluates the Cartesian product on the elements of the special array. This results in an `iterable object`  that contains all the final sequences, which is then stored in the text file.
+The special array is then passed to the `itertools.product()` function, which evaluates the Cartesian product on the elements of the special array. This results in an `iterable object`  that contains all the final sequences, which is then stored in the text file.
+
+### Random sample
+
+A trivial random sampler is implemented using `random.sample()` on the sequences array, and then stored in a text file.
 
 # Contribution
 
