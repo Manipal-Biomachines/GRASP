@@ -13,7 +13,8 @@ l=l [PEP_MOD Image]
 
 > *For more information, refer to this page on our wiki: **https://2022.igem.wiki/mit-mahe/software***
 
-l=l [GIF animation]
+![GIF animation](https://static.igem.wiki/teams/4200/wiki/software/cartesianproduct-manimce-v0-16-0-post0.gif)
+*Peptide sequence mutations on a sample sequence. Right: The list of all the outputted sequences.*
 
 ## Description
 
