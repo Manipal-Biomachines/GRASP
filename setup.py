@@ -4,9 +4,9 @@ pip setup.py
 from setuptools import setup, find_packages
 
 setup(
-    name='pep_mod',
+    name='grasp',
     version='0.17.0',
-    packages=find_packages(include=['pep_mod.py']),
+    packages=find_packages(include=['grasp.py']),
     description='Peptide sequence mutater using Alanine Scanning',
     author='Ashrith Sagar Yedlapalli',
     author_email='ashrith9sagar@gmail.com',
@@ -18,6 +18,6 @@ setup(
     tests_require=['pytest'],
     where='src',
     entry_points={
-        'console_scripts': ['pep_mod=pep_mod.pep_mod:main']
+        'console_scripts': ['grasp=grasp.grasp:main']
     }
 )
