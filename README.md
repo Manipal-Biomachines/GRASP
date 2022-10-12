@@ -1,7 +1,5 @@
 > ***Peptide sequence mutator through Alanine Scanning***
 
-l=l [PEP_MOD Image]
-
 ## Table of contents
 
 -  [Description](#description)
@@ -54,15 +52,7 @@ Protein engineering is the process of modifying a protein through substitution, 
 
 Furthermore, we explored other point mutation softwares for our problem; however, they only took surface information into consideration. We decided to take ddG value of a residue as the parameter for mutation which give an increase in the accuracy of the mutation.
 
-## Available current alternatives
-
-l=l PhageModifier
-
-https://2018.igem.org/Team:IISc-Bangalore/Software
-
 # Installation
-
-## Linux/Unix
 
 1. Open terminal and go to a directory where you want to installation files to be downloaded to.
 
@@ -76,32 +66,19 @@ https://2018.igem.org/Team:IISc-Bangalore/Software
    git clone https://gitlab.igem.org/2022/software-tools/mit-mahe.git
    ```
 
-## macOS
+3. ```shell
+   pip install -e .
+   ```
 
-1. Install Homebrew, if not already installed.
-
-```shell
-brew install 
-```
-
-2. 
-3. 
-
-## Windows
-
-l=l
+4. ```shell
+   python3 -m pep_mod/pep_mod.py -h
+   ```
 
 ## Install dependencies
 
-l=l
-
-## Compilation from source
-
-l=l
-
-# Usage
-
-l=l
+   ```shell
+      pip install -r requirements.txt
+   ```
 
 **Input**: A docked structure of a receptor and a ligand.
 
@@ -109,21 +86,7 @@ l=l
 
 ## Flags
 
--g
-
--a
-
--o
-
--d
-
--g
-
--a
-
--l
-
--c
+-g, -a, -o, -d, -g, -a, -l, -c
 
 # Method
 
@@ -169,9 +132,7 @@ A trivial random sampler is implemented using `random.sample()` on the sequences
 
 # Contribution
 
-l=l [Guildlines and future scope of the project]
-
-l=l Involving a Monte Carlo approach of sampling
+Plans to include a Monte Carlo approach of sampling.
 
 ## Authors and acknowledgement
 
