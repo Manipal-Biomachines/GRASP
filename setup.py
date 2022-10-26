@@ -5,14 +5,15 @@ from setuptools import setup, find_packages
 
 setup(
     name='grasp',
-    version='0.17.0',
+    version='0.17.7',
     packages=find_packages(include=['grasp.py']),
     description='Peptide sequence mutater using Alanine Scanning',
     author='Ashrith Sagar Yedlapalli',
     author_email='ashrith9sagar@gmail.com',
     url='https://2022.igem.wiki/mit-mahe/software',
     install_requires=[
-    'pandas'
+    'pandas',
+    'cardinality'
     ],
     setup_requires=['pytest-runner', 'flake8'],
     tests_require=['pytest'],

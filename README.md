@@ -19,7 +19,7 @@
 The software mainly comprises of the following modules:
 
 1. **Alanine Scan ddG values**
-   BUDE Alanine scan is employed to obtain ddG values of each residue present in the input.
+   [BUDE Alanine scan](https://pragmaticproteindesign.bio.ed.ac.uk/balas/) is employed to obtain ddG values of each residue present in the input.
 
 2. **Conservative mutations**
 
@@ -70,14 +70,24 @@ Furthermore, we explored other point mutation softwares for our problem; however
    pip install -e .
    ```
 
-4. ```shell
-   python3 -m pep_mod/pep_mod.py -h
+4. Run GRASP using `grasp` command.
+   
+   ```shell
+   grasp -h
    ```
+
+### Summary
+
+```shell
+git clone https://gitlab.igem.org/2022/software-tools/mit-mahe.git
+pip install -e .
+grasp -h
+```
 
 ## Install dependencies
 
    ```shell
-      pip install -r requirements.txt
+   pip install -r requirements.txt
    ```
 
 **Input**: A docked structure of a receptor and a ligand.
@@ -92,12 +102,12 @@ Furthermore, we explored other point mutation softwares for our problem; however
 
 ## ddG threshold
 
-We take ddG value of each residue derived from BUDE alanine scan as a parameter to do mutations. To make these mutations we set a threshold ddG range for each residue (in our case, 0 to 1). Only if the ddG value lies between this range will it be mutated.
+We take ddG value of each residue derived from [BUDE Alanine scan](https://pragmaticproteindesign.bio.ed.ac.uk/balas/) as a parameter to do mutations. To make these mutations we set a threshold ddG range for each residue (in our case, 0 to 1). Only if the ddG value lies between this range will it be mutated.
 
 ## Significance of Cartesian product
 
-*Cartesian Product*: The Cartesian Product of sets $A$ and $B$ is defined as the set of all ordered pairs $(x, y)$ such that $x$ belongs to $A$ and $y$ belongs to $B$. 
-For example, if $A = {1, 2}$ and $B = {3, 4, 5}$, then the Cartesian Product of A and B is ${(1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5)}$. 
+*Cartesian Product*: The Cartesian Product of sets A and B is defined as the set of all ordered pairs (x, y) such that x belongs to A and y belongs to B. 
+For example, if A = {1, 2} and B = {3, 4, 5}, then the Cartesian Product of A and B is {(1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2, 5)}. 
 
 Originally, during a test run, the computational time that the software took for making 3 mutation positions was 2 hours 20 mins.
 After incorporating the cartesian product into the mutator, the time reduced to 11 mutation positions in 10 seconds.
@@ -112,7 +122,7 @@ We first create a Mutater object, which support the following three formats:
 
 ### Alanine scanning
 
-The Alanine scanning results from BUDE Alanine scan are parsed through which results in a position array over which mutations are possibly required.
+The Alanine scanning results from [BUDE Alanine scan](https://pragmaticproteindesign.bio.ed.ac.uk/balas/) are parsed through which results in a position array over which mutations are possibly required.
 
 ### Group mutations
 
