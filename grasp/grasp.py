@@ -389,7 +389,7 @@ def format_input(contents):
 
 def main():
     # For the command line parser.
-    parser = argparse.ArgumentParser(prog='pep_mod', description='Peptide modifications generator')
+    parser = argparse.ArgumentParser(prog='grasp', description='Generating Random Alanine Scanned Peptides')
     parser.add_argument('input_file', type=str, help='Input file [.txt]')
     parser.add_argument('-o', '--output', dest='output_file', type=str, help='Output filename')
     parser.add_argument('-d', '--dipeptide', action='store_true', help='Dipeptides match')
