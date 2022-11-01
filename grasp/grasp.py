@@ -13,11 +13,11 @@ from scipy.stats import norm
 class BAlaS:
     """BUDE Alanine Scan: ddG values
     """
+
     def __init__(self):
         self.stable_df_bals = self.df_bals = self.df_ddg = None
         self.ddg_threshold = None
         self.positions = []
-
 
     def bals_read(self, bals2csv_file):
         """Accepts .csv files converted using bals2csv.py
@@ -33,7 +33,6 @@ class BAlaS:
 
         return self.df_bals
 
-
     def replot_read(self, replot_csv_file):
         """Accepts .csv files from replot"""
         df_ddg = pandas.read_csv(replot_csv_file)
@@ -42,7 +41,6 @@ class BAlaS:
 
         self.df_ddg = df_ddg
         return df_ddg
-
 
     def replot_filter(self, mutation_lock=None, lower_threshold=0, upper_threshold=1):
         """Filter out based on ddG thresholds"""
@@ -53,13 +51,12 @@ class BAlaS:
 
         df_lower = df_unlocked[df_unlocked['ddGs'] > lower_threshold]
         ddg_threshold = df_lower[df_lower['ddGs'] < upper_threshold]
-        print("DDG values for between", lower_threshold, 
-            "and", upper_threshold, "kCal/mol:\n",
-            ddg_threshold.sort_values('ddGs', ascending=True))
+        print("DDG values for between", lower_threshold,
+              "and", upper_threshold, "kCal/mol:\n",
+              ddg_threshold.sort_values('ddGs', ascending=True))
 
         self.ddg_threshold = ddg_threshold
         return ddg_threshold
-
 
     def replot_get_positions(self, count=5):
         """Get positions from filtered ddG thresholds"""
@@ -81,11 +78,11 @@ class BAlaS:
 class MutationObject:
     """Mutation format
     """
+
     def __init__(self, sequence, mutation):
         self.wild_type = self.position = self.mutant_type = None
         self.sequence = sequence
         self.from_str(mutation)
-
 
     def from_str(self, mutation):
         """Convert mutation in string format to MutationObject.
@@ -101,14 +98,12 @@ class MutationObject:
         mutant_type = re.search(r'([A-Za-z])$', mutation)
         self.mutant_type = mutant_type[0] if mutant_type is not None else self.mutant_type
 
-
     def new_mutant_type(self, mut_ty):
         """Create a new MutationObject with a differnt mutant_type attribute.
         """
         new_obj = copy.copy(self)
         new_obj.mutant_type = mut_ty
         return new_obj
-
 
     def to_str(self):
         """Convert MutationObject to string format.
@@ -121,6 +116,7 @@ class MutationObject:
 class Mutater:
     """Mutater: groups, ddg, dipeptide
     """
+
     def __init__(self, sequence, mutations=None, mutation_lock=None):
         self.groups = {
             'polar_uncharged': ['S', 'T', 'C', 'N', 'Q'],
@@ -135,12 +131,10 @@ class Mutater:
         self.sequential_mutations = self.sequences_consumable = None
         self.sequences = None
 
-
     def append_mutation(self, mut_obj):
         """Append input mutation object to self.mutations
         """
         self.mutations.append(mut_obj)
-
 
     def by_groups(self):
         """Returns mutation arrays based on group mutations
@@ -171,7 +165,6 @@ class Mutater:
         self.sequential_mutations = sequential_mutations
         return sequential_mutations
 
-
     def to_sequences(self):
         """P&C of new_mutations. nCr approach.
         Choose r mutation positions at a time, out of n mutations.
@@ -179,7 +172,7 @@ class Mutater:
         try:
             seqs = [x for x in itertools.product(*self.sequential_mutations)]
             self.sequences_consumable = False
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             seqs = itertools.product(*self.sequential_mutations)
             self.sequences_consumable = True
         print("S| Converted mutations to sequences format")
@@ -187,13 +180,11 @@ class Mutater:
         self.sequences = seqs
         return seqs
 
-
     def show_sequences(self):
         """Print self.sequences"""
         for sequence in self.sequences:
             sequence = "".join(sequence)
             print(sequence)
-
 
     def save_sequences(self, file):
         """Save self.sequences to a file"""
@@ -203,16 +194,15 @@ class Mutater:
                 opened_file.write(f"{line}\n")
         print("S| Saved sequences to", file)
 
-
     def remove_dipeptides(self):
         """Remove dipeptides from self.sequences"""
-        check_dipeptide = lambda seq: re.search(r"(.)\1", str(seq))
-        get_all_dipeptides = lambda seq: re.finditer(r"(.)\1", seq)
+        def check_dipeptide(seq): return re.search(r"(.)\1", str(seq))
+        def get_all_dipeptides(seq): return re.finditer(r"(.)\1", seq)
 
         try:
             seqs = [x for x in itertools.filterfalse(check_dipeptide, map("".join, self.sequences))]
             self.sequences_consumable = False
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             seqs = itertools.filterfalse(check_dipeptide, map("".join, self.sequences))
             self.sequences_consumable = True
         print("S| Removed dipeptides from sequences")
@@ -220,11 +210,9 @@ class Mutater:
         self.sequences = seqs
         return sequences
 
-
     def by_intein_sequences(self):
         """[SKIPPED]
         """
-
 
     def by_cleavage_sites(self):
         """[SKIPPED]
@@ -238,11 +226,9 @@ class Mutater:
         #   match = str(sequence).find(intein)
         #   return not match
 
-
     def by_charge_criterion(self):
         """[SKIPPED]
         """
-
 
     def randomise(self):
         """At random positions
@@ -258,7 +244,6 @@ class Mutater:
         # mutated_positions = new_mutation_positions
         # sequences = groups_mutations(sequence, mutation_positions)
 
-
     def random_sampler(self, choose=5):
         """Random sampling through random.
         Chooses 5 sequences by default.
@@ -270,13 +255,11 @@ class Mutater:
         try:
             seqs = random.sample(seqs, choose)
             print("S| Sampled", choose, "sequences")
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             pass
-
 
         self.sequences = seqs
         return sequences
-
 
     def monte_carlo_sampler(self, choose=5):
         """Random sampling through Monte-Carlo.
@@ -298,7 +281,8 @@ class sequences:
         """Returns first dipeptide match if present, else None
         """
         match = re.search(r"(.)\1", str(sequence))
-        if match: return match[0], match.span()
+        if match:
+            return match[0], match.span()
         return None, None
 
     def dipeptide_matches(self, sequences):
@@ -330,7 +314,7 @@ class sequences:
 
         # Conservative replacement.
         contents = [sequence]
-        contents.append(str(mutation_position)) # Just one mutation_position.
+        contents.append(str(mutation_position))  # Just one mutation_position.
         print(contents)
         sequence, mutations = format_input(contents)
 
@@ -345,12 +329,12 @@ class sequences:
                 if mutation['wild_type'] in groups[types]:
                     for AA in groups[types]:
                         position = int(mutation['position'])
-                        if (AA == sequence[position-2])|(AA == sequence[position]):
+                        if (AA == sequence[position-2]) | (AA == sequence[position]):
                             print("Discarding mutation of", mutation['wild_type'],
-                                "with", AA, "at", position)
+                                  "with", AA, "at", position)
                         else:
                             print("DP: Mutating", mutation['wild_type'],
-                                "with", AA, "at", position)
+                                  "with", AA, "at", position)
                             new_mutation = mutation['wild_type'] + mutation['position'] + AA
                             new_mutations.append(new_mutation)
                     break
@@ -365,7 +349,7 @@ def save_as(file, contents):
 
 def to_mut_obj(sequence, given_mutations):
     """Convert to MutationObject"""
-    remove_new_line = lambda s: str(s).replace('\n', '')
+    def remove_new_line(s): return str(s).replace('\n', '')
 
     muts = []
     for line in given_mutations:
@@ -377,7 +361,7 @@ def to_mut_obj(sequence, given_mutations):
 
 
 def format_input(contents):
-    remove_new_line = lambda s: str(s).replace('\n', '')
+    def remove_new_line(s): return str(s).replace('\n', '')
 
     sequence = remove_new_line(contents[0])
     given_mutations = contents[1:]
@@ -396,7 +380,8 @@ def main():
     parser.add_argument('-g', '--groups', action='store_true', help='Groups filter')
     parser.add_argument('-a', '--alaninescan', help='Alanine scan DDG results from BUDE Alanine scan')
     parser.add_argument('-l', '--lock', type=str, dest='mutation_lock', help='Mutation lock positions')
-    parser.add_argument('-c', '--count', type=int, dest='mutation_count', help='Number of mutations to consider at a time', default=1)
+    parser.add_argument('-c', '--count', type=int, dest='mutation_count',
+                        help='Number of mutations to consider at a time', default=1)
     args = parser.parse_args()
 
     # If --output not specified, use input_file filename.
@@ -413,7 +398,7 @@ def main():
             lock_contents = file.readlines()
         mutation_lock = []
         for line in lock_contents:
-            content = line.replace('\n', '') # Remove newlines.
+            content = line.replace('\n', '')  # Remove newlines.
             mutation_lock.append(content)
         mutations_obj.mutation_lock = mutation_lock.sort(key=lambda x: int(x))
         print("Locked mutation positions:", mutation_lock)
@@ -422,7 +407,6 @@ def main():
         muts = mutations_obj.by_groups()
         seqs = mutations_obj.to_sequences()
         mutations_obj.save_sequences(output_file.replace(".txt", "_GrpAllSeqs.txt"))
-
 
     if args.alaninescan:
         bude = BAlaS()
