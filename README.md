@@ -1,4 +1,7 @@
-> ***Peptide sequence mutator through Alanine Scanning***
+# GRASP
+> ***Generating Random Alanine Scanned Peptides***
+
+*Peptide sequence mutator through Alanine Scanning*
 
 ## Table of contents
 
