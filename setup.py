@@ -5,9 +5,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='grasp',
-    version='0.17.7',
+    version='0.17.13',
     packages=find_packages(include=['grasp.py']),
-    description='Peptide sequence mutater using Alanine Scanning',
+    description='Generating Random Alanine Scanned Peptides',
     author='Ashrith Sagar Yedlapalli',
     author_email='ashrith9sagar@gmail.com',
     url='https://2022.igem.wiki/mit-mahe/software',
