@@ -1,17 +1,20 @@
-"""Peptide modifications
+"""
+GRASP: Generating Random Alanine Scanned Peptides
+Peptide modifications parts
 """
 import random
 import argparse
 import re
 import copy
 import itertools
-import cardinality
 import pandas
-from scipy.stats import norm
+# import cardinality
+# from scipy.stats import norm
 
 
 class BAlaS:
-    """BUDE Alanine Scan: ddG values
+    """
+    BUDE Alanine Scan: ddG values
     """
 
     def __init__(self):
@@ -371,30 +374,48 @@ def format_input(contents):
     return mutations_obj
 
 
-def main():
-    # For the command line parser.
-    parser = argparse.ArgumentParser(prog='grasp', description='Generating Random Alanine Scanned Peptides')
-    parser.add_argument('input_file', type=str, help='Input file [.txt]')
-    parser.add_argument('-o', '--output', dest='output_file', type=str, help='Output filename')
-    parser.add_argument('-d', '--dipeptide', action='store_true', help='Dipeptides match')
-    parser.add_argument('-g', '--groups', action='store_true', help='Groups filter')
-    parser.add_argument('-a', '--alaninescan', help='Alanine scan DDG results from BUDE Alanine scan')
-    parser.add_argument('-l', '--lock', type=str, dest='mutation_lock', help='Mutation lock positions')
-    parser.add_argument('-c', '--count', type=int, dest='mutation_count',
-                        help='Number of mutations to consider at a time', default=1)
+if __name__ == "__main__":
+    # Command line parser.
+    parser = argparse.ArgumentParser(prog='grasp',
+        description='Generating Random Alanine Scanned Peptides')
+
+    parser.add_argument('input_file',
+        type=str, help='Input file [.txt]')
+
+    parser.add_argument('-o', '--output',
+        dest='output_file', type=str, help='Output filename')
+
+    parser.add_argument('-d', '--dipeptide',
+     action='store_true', help='Dipeptides match')
+
+    parser.add_argument('-g', '--groups',
+        action='store_true', help='Groups filter')
+
+    parser.add_argument('-a', '--alaninescan',
+     help='Alanine scan DDG results from BUDE Alanine scan')
+
+    parser.add_argument('-l', '--lock',
+        type=str, dest='mutation_lock',
+        help='Mutation lock positions')
+
+    parser.add_argument('-c', '--count',
+        type=int, dest='mutation_count',
+        help='Number of mutations to consider at a time', default=1)
+
+
     args = parser.parse_args()
 
     # If --output not specified, use input_file filename.
     output_file = args.output_file if args.output_file else args.input_file
 
-    with open(args.input_file, "r") as file:
+    with open(args.input_file, "r", encoding="utf-8") as file:
         input_contents = file.readlines()
     mutations_obj = format_input(input_contents)
     sequence = mutations_obj.sequence
     sequences = [sequence]
 
     if args.mutation_lock:
-        with open(args.mutation_lock, "r") as file:
+        with open(args.mutation_lock, "r", encoding="utf-8") as file:
             lock_contents = file.readlines()
         mutation_lock = []
         for line in lock_contents:
@@ -434,7 +455,3 @@ def main():
 
     seqs = mutations_obj.random_sampler(5)
     mutations_obj.save_sequences(output_file.replace(".txt", "_SeqsRndm.txt"))
-
-
-if __name__ == "__main__":
-    main()
