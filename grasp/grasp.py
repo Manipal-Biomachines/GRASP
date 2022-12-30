@@ -79,7 +79,8 @@ class BAlaS:
 
 
 class MutationObject:
-    """Mutation format
+    """
+    Mutation format
     """
 
     def __init__(self, sequence, mutation):
@@ -117,7 +118,8 @@ class MutationObject:
 
 
 class Mutater:
-    """Mutater: groups, ddg, dipeptide
+    """
+    Mutater: groups, ddg, dipeptide
     """
 
     def __init__(self, sequence, mutations=None, mutation_lock=None):
@@ -135,12 +137,14 @@ class Mutater:
         self.sequences = None
 
     def append_mutation(self, mut_obj):
-        """Append input mutation object to self.mutations
+        """
+        Append input mutation object to self.mutations
         """
         self.mutations.append(mut_obj)
 
     def by_groups(self):
-        """Returns mutation arrays based on group mutations
+        """
+        Returns mutation arrays based on group mutations
         """
         groups = self.groups
         print("G| Original sequence:", self.sequence)
@@ -169,9 +173,11 @@ class Mutater:
         return sequential_mutations
 
     def to_sequences(self):
-        """P&C of new_mutations. nCr approach.
+        """
+        P&C of new_mutations. nCr approach.
         Choose r mutation positions at a time, out of n mutations.
-        Implemented using the Cartesian product."""
+        Implemented using the Cartesian product.
+        """
         try:
             seqs = [x for x in itertools.product(*self.sequential_mutations)]
             self.sequences_consumable = False
@@ -184,13 +190,17 @@ class Mutater:
         return seqs
 
     def show_sequences(self):
-        """Print self.sequences"""
+        """
+        Print self.sequences
+        """
         for sequence in self.sequences:
             sequence = "".join(sequence)
             print(sequence)
 
     def save_sequences(self, file):
-        """Save self.sequences to a file"""
+        """
+        Save self.sequences to a file
+        """
         with open(file, "w", encoding='utf8') as opened_file:
             for sequence in self.sequences:
                 line = "".join(sequence)
@@ -198,7 +208,9 @@ class Mutater:
         print("S| Saved sequences to", file)
 
     def remove_dipeptides(self):
-        """Remove dipeptides from self.sequences"""
+        """
+        Remove dipeptides from self.sequences
+        """
         def check_dipeptide(seq): return re.search(r"(.)\1", str(seq))
         def get_all_dipeptides(seq): return re.finditer(r"(.)\1", seq)
 
@@ -214,11 +226,13 @@ class Mutater:
         return sequences
 
     def by_intein_sequences(self):
-        """[SKIPPED]
+        """
+        [SKIPPED]
         """
 
     def by_cleavage_sites(self):
-        """[SKIPPED]
+        """
+        [SKIPPED]
         """
         # def intein_matches(sequence):
         # inteins = ["CRAZY_SEQUENCE", "ANOTHER_SEQUENCE"]
@@ -230,11 +244,13 @@ class Mutater:
         #   return not match
 
     def by_charge_criterion(self):
-        """[SKIPPED]
+        """
+        [SKIPPED]
         """
 
     def randomise(self):
-        """At random positions
+        """
+        At random positions
         """
         # [TODO]
         # for mutation_position in range(len(sequence)):
@@ -248,7 +264,8 @@ class Mutater:
         # sequences = groups_mutations(sequence, mutation_positions)
 
     def random_sampler(self, choose=5):
-        """Random sampling through random.
+        """
+        Random sampling through random.
         Chooses 5 sequences by default.
         """
         seqs = []
@@ -265,7 +282,8 @@ class Mutater:
         return sequences
 
     def monte_carlo_sampler(self, choose=5):
-        """Random sampling through Monte-Carlo.
+        """
+        Random sampling through Monte-Carlo.
         A normal distribution is chosen.
         Chooses 5 sequences by default.
         """
@@ -281,7 +299,8 @@ class sequences:
         pass
 
     def check_dipeptide(self, sequence):
-        """Returns first dipeptide match if present, else None
+        """
+        Returns first dipeptide match if present, else None
         """
         match = re.search(r"(.)\1", str(sequence))
         if match:
@@ -289,7 +308,9 @@ class sequences:
         return None, None
 
     def dipeptide_matches(self, sequences):
-        """Filters out and returns the non-dipeptide sequences"""
+        """
+        Filters out and returns the non-dipeptide sequences
+        """
         new_sequences = sequences
         for sequence in sequences:
             if dipeptide_match(sequence):
@@ -299,7 +320,9 @@ class sequences:
         return new_sequences
 
     def dipeptide_mutater(self, sequence, dipeptide, ddg):
-        """Mutates to remove dipeptides."""
+        """
+        Mutates to remove dipeptides.
+        """
         groups = {
             'polar_uncharged': ['S', 'T', 'C', 'P', 'N', 'Q'],
             'positively_charged': ['K', 'R', 'H'],
@@ -351,7 +374,9 @@ def save_as(file, contents):
 
 
 def to_mut_obj(sequence, given_mutations):
-    """Convert to MutationObject"""
+    """
+    Convert to MutationObject
+    """
     def remove_new_line(s): return str(s).replace('\n', '')
 
     muts = []
