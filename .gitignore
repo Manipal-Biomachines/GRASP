@@ -1,8 +1,10 @@
-.venv
-venv
-__pycache__
-.vscode
-Files/
-.DS_Store
+**/.DS_Store
+.vscode/
+
+**/__pycache__
+.venv/
+venv/
 *.egg-info
 *.eggs
+
+Files/
