@@ -78,6 +78,66 @@ class BAlaS:
         return positions
 
 
+class McsmPPI2:
+    """
+    mCSM-PPI2
+    """
+    def __init__(self):
+        self.positions = None
+        self.amino_acids_chart = {
+            "ALA": "A",
+            "CYS": "C",
+            "ASP": "D",
+            "GLU": "E",
+            "PHE": "F",
+            "GLY": "G",
+            "HIS": "H",
+            "ILE": "I",
+            "LYS": "K",
+            "LEU": "L",
+            "MET": "M",
+            "ASN": "N",
+            "PRO": "P",
+            "GLN": "Q",
+            "ARG": "R",
+            "SER": "S",
+            "THR": "T",
+            "VAL": "V",
+            "TRP": "W",
+            "TYR": "Y"
+        }
+
+
+    def mcsm_read(self, mcsm_csv_file):
+        """ Accepts .csv files from mCSM-PPI2 """
+        df_mcsm = pandas.read_csv(mcsm_csv_file)
+
+        wild_types = df_mcsm['wild-type']
+        res_numbers = df_mcsm['res-number']
+        mutants = df_mcsm['mutant']
+        mutations = self.convert_to_mut_obj(wild_types, res_numbers, mutants)
+
+        prediction = df_mcsm['mcsm-ppi2-prediction']
+        return mutations, prediction
+
+    def convert_to_mut_obj(self, wild_types, res_numbers, mutants):
+        """ Convert mCSM format to str format """
+        mutations = []
+        count = len(wild_types)
+        for index in range(count):
+            wild_type = wild_types[index]
+            res_number = res_numbers[index]
+            mutant = mutants[index]
+
+            wild_type = self.amino_acids_chart[wild_type]
+            mutants = self.amino_acids_chart[mutant]
+
+            mutation = wild_type + str(res_number) + mutant
+            mutations.append(mutation)
+
+        return mutations
+
+
 class MutationObject:
     """
     Mutation format
@@ -419,6 +479,9 @@ if __name__ == "__main__":
     parser.add_argument('-a', '--alaninescan',
      help='Alanine scan DDG results from BUDE Alanine scan')
 
+    parser.add_argument('-m', '--mcsm',
+     help='Mutation positions from BUDE Alanine scan to mCSM-PPI2')
+
     parser.add_argument('-l', '--lock',
         type=str, dest='mutation_lock',
         help='Mutation lock positions')
@@ -453,6 +516,14 @@ if __name__ == "__main__":
         muts = mutations_obj.by_groups()
         seqs = mutations_obj.to_sequences()
         mutations_obj.save_sequences(output_file.replace(".txt", "_GrpAllSeqs.txt"))
+
+    if args.mcsm:
+        bude = BAlaS()
+        df_ddg = bude.replot_read(args.mcsm)
+        ddg_preferences = bude.replot_filter(mutation_lock, 0, 1)
+        positions = bude.replot_get_positions(args.mutation_count)
+
+        muts = to_mut_obj(sequence, positions)
 
     if args.alaninescan:
         bude = BAlaS()
