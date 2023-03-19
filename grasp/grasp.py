@@ -470,6 +470,9 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output',
         dest='output_file', type=str, help='Output filename')
 
+    parser.add_argument('-C', '--chain',
+     help='Chain to consider')
+
     parser.add_argument('-d', '--dipeptide',
      action='store_true', help='Dipeptides match')
 
@@ -517,13 +520,42 @@ if __name__ == "__main__":
         seqs = mutations_obj.to_sequences()
         mutations_obj.save_sequences(output_file.replace(".txt", "_GrpAllSeqs.txt"))
 
+        # get_unique = lambda seqs: list(dict.fromkeys(seqs))
+        # sequences = get_unique(sequences)
+
+        # print("Output sequences:")
+        # mutations_obj.show_sequences()
+        # print("Output sequences count:", cardinality.count(mutations_obj.sequences))
+
+        seqs = mutations_obj.random_sampler(5)
+        mutations_obj.save_sequences(output_file.replace(".txt", "_SeqsRndm.txt"))
+
     if args.mcsm:
+        GROUPS = [
+            ['S', 'T', 'C', 'N', 'Q'],
+            ['K', 'R', 'H'],
+            ['D', 'E'],
+            ['G', 'A', 'V', 'L', 'M', 'I'],
+            ['F', 'Y', 'W']
+        ]
+
+        chain = args.chain
+
         bude = BAlaS()
         df_ddg = bude.replot_read(args.mcsm)
         ddg_preferences = bude.replot_filter(mutation_lock, 0, 1)
         positions = bude.replot_get_positions(args.mutation_count)
 
+        mutations = []
         muts = to_mut_obj(sequence, positions)
+        for mut in muts:
+            for group in GROUPS:
+                if mut.wild_type in group:
+                    for AA in group:
+                        if AA != mut.wild_type:
+                            mutation = chain + " " + mut.to_str() + AA
+                            mutations.append(mutation)
+        save_as("mutations.txt", mutations)
 
     if args.alaninescan:
         bude = BAlaS()
@@ -538,16 +570,16 @@ if __name__ == "__main__":
         seqs = mutations_obj.to_sequences()
         mutations_obj.save_sequences(output_file.replace(".txt", "_BAlsAllSeqs.txt"))
 
+        # get_unique = lambda seqs: list(dict.fromkeys(seqs))
+        # sequences = get_unique(sequences)
+
+        # print("Output sequences:")
+        # mutations_obj.show_sequences()
+        # print("Output sequences count:", cardinality.count(mutations_obj.sequences))
+
+        seqs = mutations_obj.random_sampler(5)
+        mutations_obj.save_sequences(output_file.replace(".txt", "_SeqsRndm.txt"))
+
     if args.dipeptide:
         seqs = mutations_obj.remove_dipeptides()
         mutations_obj.save_sequences(output_file.replace(".txt", "_SeqsDiPep.txt"))
-
-    # get_unique = lambda seqs: list(dict.fromkeys(seqs))
-    # sequences = get_unique(sequences)
-
-    # print("Output sequences:")
-    # mutations_obj.show_sequences()
-    # print("Output sequences count:", cardinality.count(mutations_obj.sequences))
-
-    seqs = mutations_obj.random_sampler(5)
-    mutations_obj.save_sequences(output_file.replace(".txt", "_SeqsRndm.txt"))
