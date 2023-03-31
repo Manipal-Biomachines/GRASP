@@ -107,7 +107,6 @@ class McsmPPI2:
             "TYR": "Y"
         }
 
-
     def mcsm_read(self, mcsm_csv_file):
         """ Accepts .csv files from mCSM-PPI2 """
         df_mcsm = pandas.read_csv(mcsm_csv_file)
@@ -115,10 +114,14 @@ class McsmPPI2:
         wild_types = df_mcsm['wild-type']
         res_numbers = df_mcsm['res-number']
         mutants = df_mcsm['mutant']
-        mutations = self.convert_to_mut_obj(wild_types, res_numbers, mutants)
+        # mutations = self.convert_to_mut_obj(wild_types, res_numbers, mutants)
 
         prediction = df_mcsm['mcsm-ppi2-prediction']
-        return mutations, prediction
+        # return mutations, prediction
+
+        df_sort = df_mcsm[['wild-type', 'res-number', 'mutant', 'mcsm-ppi2-prediction']]
+        df_sort = df_sort.sort_values('mcsm-ppi2-prediction', ascending=False)
+        return df_sort
 
     def convert_to_mut_obj(self, wild_types, res_numbers, mutants):
         """ Convert mCSM format to str format """
@@ -482,8 +485,11 @@ if __name__ == "__main__":
     parser.add_argument('-a', '--alaninescan',
      help='Alanine scan DDG results from BUDE Alanine scan')
 
-    parser.add_argument('-m', '--mcsm',
+    parser.add_argument('-m', '--tomcsm',
      help='Mutation positions from BUDE Alanine scan to mCSM-PPI2')
+
+    parser.add_argument('-M', '--mcsm',
+     help='Mutation results from mCSM-PPI2')
 
     parser.add_argument('-l', '--lock',
         type=str, dest='mutation_lock',
@@ -531,6 +537,10 @@ if __name__ == "__main__":
         mutations_obj.save_sequences(output_file.replace(".txt", "_SeqsRndm.txt"))
 
     if args.mcsm:
+        mcsm = McsmPPI2()
+        print(mcsm.mcsm_read(args.mcsm))
+
+    if args.tomcsm:
         GROUPS = [
             ['S', 'T', 'C', 'N', 'Q'],
             ['K', 'R', 'H'],
