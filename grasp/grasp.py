@@ -121,6 +121,8 @@ class McsmPPI2:
 
         df_sort = df_mcsm[['wild-type', 'res-number', 'mutant', 'mcsm-ppi2-prediction']]
         df_sort = df_sort.sort_values('mcsm-ppi2-prediction', ascending=False)
+
+        self.df_sort = df_sort
         return df_sort
 
     def convert_to_mut_obj(self, wild_types, res_numbers, mutants):
@@ -133,12 +135,30 @@ class McsmPPI2:
             mutant = mutants[index]
 
             wild_type = self.amino_acids_chart[wild_type]
-            mutants = self.amino_acids_chart[mutant]
+            mutant = self.amino_acids_chart[mutant]
 
             mutation = wild_type + str(res_number) + mutant
             mutations.append(mutation)
 
         return mutations
+
+    def mcsm_filter(self):
+        """ Get the positive ddG values """
+        df_sort = self.df_sort
+        df_positive = df_sort[df_sort['mcsm-ppi2-prediction'] > 0]
+        self.df_positive = df_positive
+        return df_positive
+
+    def generate_mutations(self):
+        """ Generate mutations for Cartesian product using weighted sums """
+        weights = self.df_positive['mcsm-ppi2-prediction'].to_list()
+        wild_types = self.df_positive['wild-type'].to_list()
+        res_numbers = self.df_positive['res-number'].to_list()
+        mutants = self.df_positive['mutant'].to_list()
+        mutations = self.convert_to_mut_obj(wild_types, res_numbers, mutants)
+
+        print(mutations, weights)
+        return mutations, weights
 
 
 class MutationObject:
@@ -538,7 +558,10 @@ if __name__ == "__main__":
 
     if args.mcsm:
         mcsm = McsmPPI2()
-        print(mcsm.mcsm_read(args.mcsm))
+        mcsm.mcsm_read(args.mcsm)
+        mcsm.mcsm_filter()
+        mcsm.generate_mutations()
+
 
     if args.tomcsm:
         GROUPS = [
