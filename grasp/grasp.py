@@ -182,7 +182,7 @@ class McsmPPI2:
         for seq_mut in seq_muts:
             mutated_seq = "".join(seq_mut)
             sequences.append(mutated_seq)
-            print(mutated_seq)
+            # print(mutated_seq)
             muts = sequence_to_mutation(self.sequence, mutated_seq)
             weighted_muts.append(muts)
 
@@ -194,10 +194,37 @@ class McsmPPI2:
                 index = mutations_str.index(mut.to_str())
                 score += weights[index]
             scores.append(score)
-        print(scores)
+        # print(scores)
 
         self.scores = scores
+        self.sequences = sequences
         return mutations, scores
+
+    def topk(self, k):
+        """ Return top-k sequences ranked with scores """
+        scores, sequences = self.scores, self.sequences
+
+        topk_sequences = []
+        sorted_scores = sorted(scores, reverse=True)
+        for i in range(k):
+            index = scores.index(sorted_scores[i])
+            topk_sequences.append(sequences[index])
+        print("\nM| ", end="")
+        print("\nM| ".join(topk_sequences))
+
+        self.topk_sequences = topk_sequences
+        return topk_sequences
+
+    def save_sequences(self, file, sequences=None):
+        """ Save sequences to a file """
+        if not sequences:
+            sequences = self.topk_sequences
+
+        with open(file, "w", encoding='utf8') as opened_file:
+            for sequence in sequences:
+                line = "".join(sequence)
+                opened_file.write(f"{line}\n")
+        print("M| Saved sequences to", file)
 
 
 class MutationObject:
@@ -617,6 +644,8 @@ if __name__ == "__main__":
         mcsm.mcsm_filter()
         mcsm.generate_mutations()
         mcsm.mutate()
+        mcsm.topk(5)
+        mcsm.save_sequences("McsmPPI2_topk.txt")
 
     if args.tomcsm:
         GROUPS = [
