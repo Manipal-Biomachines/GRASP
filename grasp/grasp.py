@@ -107,14 +107,14 @@ class McsmPPI2:
             "TYR": "Y"
         }
 
-    def mcsm_read(self, mcsm_csv_file):
+    def mcsm_read(self, mcsm_csv_file, sequence):
         """ Accepts .csv files from mCSM-PPI2 """
         df_mcsm = pandas.read_csv(mcsm_csv_file)
 
         wild_types = df_mcsm['wild-type']
         res_numbers = df_mcsm['res-number']
         mutants = df_mcsm['mutant']
-        # mutations = self.convert_to_mut_obj(wild_types, res_numbers, mutants)
+        # mutations = self.convert_to_mut_obj(sequence, wild_types, res_numbers, mutants)
 
         prediction = df_mcsm['mcsm-ppi2-prediction']
         # return mutations, prediction
@@ -123,6 +123,7 @@ class McsmPPI2:
         df_sort = df_sort.sort_values('mcsm-ppi2-prediction', ascending=False)
 
         self.df_sort = df_sort
+        self.sequence = sequence
         return df_sort
 
     def convert_to_mut_obj(self, wild_types, res_numbers, mutants):
@@ -140,6 +141,7 @@ class McsmPPI2:
             mutation = wild_type + str(res_number) + mutant
             mutations.append(mutation)
 
+        mutations = to_mut_obj(self.sequence, mutations)
         return mutations
 
     def mcsm_filter(self):
@@ -150,15 +152,52 @@ class McsmPPI2:
         return df_positive
 
     def generate_mutations(self):
-        """ Generate mutations for Cartesian product using weighted sums """
+        """ Generate mutations from mCSM-PPI2 Output """
         weights = self.df_positive['mcsm-ppi2-prediction'].to_list()
         wild_types = self.df_positive['wild-type'].to_list()
         res_numbers = self.df_positive['res-number'].to_list()
         mutants = self.df_positive['mutant'].to_list()
         mutations = self.convert_to_mut_obj(wild_types, res_numbers, mutants)
 
-        print(mutations, weights)
+        self.mutations, self.weights = mutations, weights
+        print("M| Mutations:", [x.to_str() for x in mutations])
+        print("M| Weights:", weights)
+
         return mutations, weights
+
+    def mutate(self):
+        """ Generate sequences by Cartesian product using weighted sums """
+        mutations, weights = self.mutations, self.weights
+
+        # All three of [WPM] mutations are known
+        sequential_mutations = list(self.sequence)
+        sequential_mutations = [[x] for x in sequential_mutations]
+        for index, mutation in enumerate(mutations):
+            position = mutation.position
+            sequential_mutations[position-1].append(mutation.mutant_type)
+
+        seq_muts = itertools.product(*sequential_mutations)
+        sequences = []
+        weighted_muts = []
+        for seq_mut in seq_muts:
+            mutated_seq = "".join(seq_mut)
+            sequences.append(mutated_seq)
+            print(mutated_seq)
+            muts = sequence_to_mutation(self.sequence, mutated_seq)
+            weighted_muts.append(muts)
+
+        scores = []
+        mutations_str = [x.to_str() for x in mutations]
+        for mut_combination in weighted_muts:
+            score = 0
+            for mut in mut_combination:
+                index = mutations_str.index(mut.to_str())
+                score += weights[index]
+            scores.append(score)
+        print(scores)
+
+        self.scores = scores
+        return mutations, scores
 
 
 class MutationObject:
@@ -471,6 +510,22 @@ def to_mut_obj(sequence, given_mutations):
     return muts
 
 
+def sequence_to_mutation(original_seq, mutated_seq):
+    """ Determine mutations from sequences """
+    if len(original_seq) != len(mutated_seq):
+        print("ERROR: Skipping sequence_to_mutation; Length mismatch")
+        return None
+
+    muts = []
+    for index, orig_AA in enumerate(original_seq):
+        mut_AA = mutated_seq[index]
+        if orig_AA != mut_AA:
+            mutation = orig_AA + str(index+1) + mut_AA
+            mut = MutationObject(original_seq, mutation)
+            muts.append(mut)
+    return muts
+
+
 def format_input(contents):
     def remove_new_line(s): return str(s).replace('\n', '')
 
@@ -558,10 +613,10 @@ if __name__ == "__main__":
 
     if args.mcsm:
         mcsm = McsmPPI2()
-        mcsm.mcsm_read(args.mcsm)
+        mcsm.mcsm_read(args.mcsm, sequence)
         mcsm.mcsm_filter()
         mcsm.generate_mutations()
-
+        mcsm.mutate()
 
     if args.tomcsm:
         GROUPS = [
