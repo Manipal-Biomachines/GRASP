@@ -65,8 +65,11 @@ class BAlaS:
         """Get positions from filtered ddG thresholds"""
         ddg_threshold_sorted = self.ddg_threshold.sort_values('ddGs', ascending=True)
         df_res_number = ddg_threshold_sorted[['ResNumber']]
-        df_res_number_clipped = df_res_number.head(count)
-        df_res_number_clipped.reset_index()
+        if count == "all":
+            df_res_number_clipped = df_res_number
+        else:
+            df_res_number_clipped = df_res_number.head(count)
+            df_res_number_clipped.reset_index()
 
         positions = []
         for _, res_number in df_res_number_clipped.iterrows():
@@ -659,9 +662,9 @@ if __name__ == "__main__":
         chain = args.chain
 
         bude = BAlaS()
-        df_ddg = bude.replot_read(args.mcsm)
+        df_ddg = bude.replot_read(args.tomcsm)
         ddg_preferences = bude.replot_filter(mutation_lock, 0, 1)
-        positions = bude.replot_get_positions(args.mutation_count)
+        positions = bude.replot_get_positions("all")
 
         mutations = []
         muts = to_mut_obj(sequence, positions)
